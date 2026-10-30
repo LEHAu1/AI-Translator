@@ -1,97 +1,144 @@
 # AI Image Translator
 
-**Cài trên Windows không cần chuẩn bị Node.js:** dùng `dist/AI-Image-Translator-Setup.exe`. Bộ cài kèm runtime, hướng dẫn nhập Gemini API key và tạo lối tắt chạy backend. Xem [hướng dẫn bộ cài](installer/README.md). Sau khi cài vẫn cần Load unpacked thư mục extension trong Chrome/Edge một lần.
+**Dịch chữ trong ảnh trên website và trang PDF bằng Google Gemini.**
 
-Chrome/Edge Manifest V3: chọn ảnh trên website → Google Gemini định vị chữ và dịch → thay chữ trên ảnh hoặc hiện bảng dịch nổi. JavaScript thuần, backend Node.js không cần cài dependency.
+AI Image Translator là extension dành cho Chrome, Edge và các trình duyệt có hỗ trợ tương tự. Bạn chọn ảnh hoặc chụp một vùng PDF, ứng dụng nhận diện chữ rồi dịch sang tiếng Việt, tiếng Anh hoặc tiếng Nhật. Với chế độ **Thay chữ trên ảnh**, bản dịch được đặt lên vùng chữ gốc để bạn đọc ngay trong bố cục của ảnh.
 
-## Chạy trên Windows
+Phù hợp để đọc truyện tranh, ảnh hướng dẫn, tài liệu và các trang PDF có nội dung bằng ngôn ngữ khác.
 
-1. Cài Node.js 22 trở lên.
-2. Mở PowerShell trong `D:\Games\AI translator`:
+> Ứng dụng gồm **extension trong trình duyệt** và **ứng dụng chạy trên Windows**. Hãy giữ ứng dụng Windows hoạt động khi dịch. Mỗi người dùng cần có Gemini API key riêng và kết nối Internet.
 
-```powershell
-Copy-Item backend/.env.example backend/.env
-notepad backend/.env
-```
+## Có thể làm gì?
 
-Điền `GEMINI_API_KEY` trong file vừa mở. Không gửi key vào chat hoặc đưa vào extension. `GEMINI_MODEL` mặc định là `gemini-3.1-flash-lite`; đổi sang model hỗ trợ ảnh mà tài khoản của bạn có quyền dùng nếu API báo lỗi. Không ghi đè `.env` nếu đã cấu hình.
+| Chức năng | Cách hoạt động |
+| --- | --- |
+| Dịch ảnh trên website | Chọn ảnh, nhận bản dịch trong bảng nổi hoặc đặt bản dịch lên ảnh. |
+| Thay chữ trên ảnh | AI xác định vùng chữ; ứng dụng che chữ gốc bằng màu nền đơn và chèn bản dịch. Có thể bật/tắt để so sánh. |
+| Chụp ảnh mới | Chọn ảnh khác ngay từ bảng dịch, không cần mở lại popup. |
+| Chụp lại | Chụp mới ảnh vừa chọn, hoặc ảnh lớn nhất đang hiển thị nếu ảnh cũ không còn trên màn hình. |
+| Xử lý ảnh bị chặn đọc | Khi website chặn đọc ảnh gốc, ứng dụng thử chụp phần ảnh đang hiển thị để dịch. |
+| Dịch trang PDF | Chụp phần PDF đang hiển thị, khoanh vùng và xem bản dịch đè chữ trong cửa sổ riêng. |
 
-Lấy Gemini API key tại https://aistudio.google.com/apikey. Nếu trước đây đã dùng OpenAI, thêm `GEMINI_API_KEY` và `GEMINI_MODEL` theo `.env.example`; backend không dùng các biến `OPENAI_*` nữa. Khởi động lại `npm start` sau khi sửa `.env`. Free tier có giới hạn request và token; kiểm tra quota trong AI Studio. Nội dung gửi qua free tier có thể được Google dùng để cải thiện sản phẩm.
+**Lưu ý về “thay chữ”:** đây là lớp bản dịch hiển thị trên ảnh. Ứng dụng chưa phục hồi nét vẽ phía sau chữ, chưa sửa file ảnh gốc và chưa xuất ra file PDF đã dịch.
 
-```powershell
-npm start
-```
+## Cài đặt nhanh trên Windows
 
-Giữ terminal chạy. Kiểm tra `http://127.0.0.1:3000/health`: `configured: true` chỉ xác nhận có cấu hình key, chưa xác minh key với Google Gemini.
+### 1. Chuẩn bị Gemini API key
 
-3. Mở `chrome://extensions` (Edge: `edge://extensions`), bật Developer mode → Load unpacked → chọn `D:\Games\AI translator\extension`.
-4. Mở website HTTP/HTTPS có ảnh chứa chữ, bấm biểu tượng extension → chọn ngôn ngữ và cách hiển thị → **Chọn ảnh để dịch** → bấm ảnh. Nhấn Esc để hủy chọn.
+1. Mở [Google AI Studio](https://aistudio.google.com/apikey) và đăng nhập tài khoản Google.
+2. Tạo API key theo hướng dẫn trên trang, hoặc dùng key bạn đã có.
+3. Giữ key để nhập vào bộ cài. Không gửi key cho người khác hoặc đưa lên GitHub.
 
-## Thay chữ trên ảnh
+Gemini áp dụng hạn mức và phí theo model, dự án và tài khoản của bạn. Kiểm tra trong Google AI Studio; bộ cài không cung cấp tài khoản Google, API key hoặc credit.
 
-Chọn **Thay chữ trên ảnh** trong popup. Gemini trả về các vùng chữ theo tọa độ chuẩn hóa 0–1000, chữ gốc, bản dịch và màu nền. Extension che từng vùng chữ bằng nền màu đơn và đặt bản dịch vào vùng đó. Cỡ chữ tự điều chỉnh theo khung; bản dịch đầy đủ luôn có trong bảng nổi. Văn bản AI được chèn bằng `textContent`.
+### 2. Cài ứng dụng
 
-Nút **Xem ảnh gốc / Hiện bản dịch** bật/tắt các lớp dịch. **Xóa lớp dịch** khôi phục ảnh gốc. Đóng bảng nổi vẫn giữ lớp dịch; mở extension để chọn ảnh tiếp sẽ hiện lại các nút điều khiển. Không chỉnh sửa file ảnh gốc.
+1. Tải file **AI-Image-Translator.exe** từ mục **Releases** của dự án. 
+2. Chạy file bộ cài trên **Windows 10/11 64-bit**.
+3. Dán **Gemini API key** vào ô tương ứng. Model mặc định của ứng dụng là `gemini-3.1-flash-lite`.
+4. Chọn **Thư mục cài đặt**, hoặc bấm **Duyệt…** để đổi nơi cài. Nên dùng thư mục riêng có quyền ghi, ví dụ `D:\Apps\AIImageTranslator`.
+5. Bấm **Kiểm tra key** nếu muốn kiểm tra kết nối, rồi bấm **Cài đặt**.
+6. Mở **AI Image Translator** từ lối tắt trên Desktop hoặc Start Menu. Chờ thông báo **Backend đang chạy**.
 
-Lớp dịch bám theo vị trí và kích thước ảnh khi cuộn/resize; hỗ trợ `object-fit: contain/cover`. Với ảnh CORS, tọa độ được quy đổi từ ảnh chụp về ảnh trên trang. Những vùng đã dịch ở phần khác của cùng ảnh được giữ lại khi dịch phần tiếp theo bằng cùng ngôn ngữ; phần trùng với vùng chụp mới được thay bằng kết quả mới. Giữ tối đa 20 ảnh và 200 vùng mỗi ảnh trong bộ nhớ. Nếu ảnh đổi URL hoặc kích thước gốc, lớp dịch được gỡ để tránh áp vào ảnh khác.
+Bộ cài đã kèm Node.js portable. Bạn **không cần cài Node.js, Python hoặc chạy `npm install`**. Nút kiểm tra key xác nhận API chấp nhận key và model tồn tại; không bảo đảm tài khoản còn đủ hạn mức để dịch.
 
-Định vị bằng Gemini là ước lượng, có thể lệch, bỏ sót hoặc gom nhầm vùng chữ. Nền màu đơn phù hợp bong bóng thoại/nền phẳng; không phục hồi tranh sau chữ (chưa có inpainting). Ảnh xoay/lật, `object-position` phức tạp và một số hiệu ứng CSS chưa hỗ trợ: chuyển sang bảng nổi. Khung quá nhỏ có thể khiến chữ khó đọc; xem bản đầy đủ trong bảng. Các vùng ảnh bị menu/quảng cáo che nên được làm rõ trước khi chụp.
+### 3. Nạp extension vào trình duyệt — chỉ làm lần đầu
 
-Sau khi nâng cấp, dừng/chạy lại `npm start`, Reload extension ở `chrome://extensions` rồi F5 website. Không cần đổi `.env`.
+1. Trong ứng dụng Windows, bấm **Mở thư mục extension** để biết thư mục cần chọn.
+2. Mở trang quản lý extension của trình duyệt:
 
-## Chụp lại sau khi chuyển trang
+   | Trình duyệt | Địa chỉ nhập vào thanh địa chỉ |
+   | --- | --- |
+   | Chrome | `chrome://extensions` |
+   | Edge | `edge://extensions` |
+   |  vv...| vv... ://extensions` |
 
-Nút **Chụp ảnh mới** ngay trong bảng dịch cho phép chọn một ảnh khác mà không cần đóng/mở popup. Bấm nút rồi bấm ảnh muốn chụp; Esc để hủy. Nút luôn chụp mới phần ảnh đang hiển thị. Khi chuyển trang trong cùng website, bảng điều khiển tự xuất hiện lại và chờ bạn bấm nút; không tự chụp/dịch. Đóng bảng bằng nút **Đóng** sẽ tắt việc khôi phục bảng ở trang kế tiếp. Sang tên miền khác hoặc tab mới cần bấm biểu tượng extension để cấp quyền activeTab cho trang đó.
+3. Bật **Chế độ dành cho nhà phát triển / Developer mode**.
+4. Bấm **Tải tiện ích đã giải nén / Load unpacked**.
+5. Chọn thư mục **extension** bên trong nơi bạn vừa cài ứng dụng. Chọn thư mục, không chọn một file riêng lẻ.
+6. Ghim biểu tượng **AI Image Translator** lên thanh công cụ nếu muốn mở nhanh.
 
-Nút **Chụp lại** có trong popup extension và bảng dịch nổi. Nút luôn chụp mới phần ảnh đang hiển thị, không tái sử dụng ảnh/bản dịch cũ. Nếu ảnh vừa chọn vẫn còn trên màn hình, extension dùng ảnh đó. Khi ảnh cũ đã bị thay hoặc bạn chuyển sang trang mới, extension dùng ảnh có diện tích hiển thị lớn nhất; muốn chọn ảnh khác thì dùng **Chọn ảnh để dịch**. Nếu không có ảnh nhìn thấy, extension báo để bạn cuộn tới ảnh.
+> Giữ nguyên thư mục cài sau khi nạp extension. Nếu chuyển thư mục sang nơi khác, bạn cần nạp lại extension từ vị trí mới.
 
-Với trang mới tải lại toàn bộ trong cùng website, bảng điều khiển được khôi phục sau khi trang tải xong. Nếu không thấy bảng, mở popup để kích hoạt lại. Không tự chụp hoặc gọi Gemini khi bạn chuyển trang. Một lần bấm tương ứng một lượt dịch, chỉ phần ảnh đang hiển thị được gửi. Đừng cuộn/đổi tab trong lúc chụp. Nếu trang hoặc ảnh thay đổi khi Gemini đang xử lý, kết quả cũ không được áp vào trang mới.
+## Dùng hằng ngày
 
-Ảnh được gửi tới Google Gemini qua backend trên máy sau khi bạn chọn. Free tier có hạn mức; phí tùy cấu hình tài khoản. Không có chế độ tự động gửi ảnh. API key chỉ nằm ở backend; backend bind `127.0.0.1`, không mở ra mạng LAN.
+1. Mở ứng dụng **AI Image Translator** trên Windows và chờ backend chạy.
+2. Mở website hoặc PDF cần đọc trong trình duyệt.
+3. Bấm biểu tượng extension và chọn chức năng dịch.
 
-## Chụp và dịch trang PDF
+Bạn có thể **thu nhỏ ứng dụng Windows xuống khay hệ thống** để tiếp tục dịch. Nhấp đúp biểu tượng ở khay để mở lại cửa sổ. Đóng ứng dụng sẽ dừng backend do ứng dụng khởi chạy.
 
-1. Mở PDF trong Chrome, Edge hoặc Brave, cuộn/phóng to phần cần dịch. Chế độ này chụp màn hình tab, không đọc trực tiếp nội dung file PDF.
-2. Bấm biểu tượng extension → **Chụp trang PDF**. Không dùng nút chọn ảnh web trên trình xem PDF tích hợp.
-3. Cửa sổ **Dịch trang PDF** mở với ảnh chụp. Kéo chuột để khoanh trang/đoạn cần dịch; bỏ qua thanh công cụ và hình thu nhỏ. Hoặc bấm **Chọn toàn ảnh** nếu bạn muốn gửi toàn bộ phần ảnh chụp đó.
-4. Chọn ngôn ngữ → **Dịch vùng đã chọn**. Chỉ vùng này được cắt trên máy và gửi backend/Gemini. Bản dịch được đặt vào vị trí chữ trên ảnh bên phải, kèm toàn bộ văn bản dịch ở dưới. Dùng **Xem ảnh gốc / Hiện bản dịch** để so sánh.
-5. Quay lại tab PDF để cuộn/chuyển trang, trở lại cửa sổ dịch và bấm **Chụp trang tiếp theo**. Nút chụp phần hiện đang hiển thị của tab gốc; không tự bấm chuyển trang PDF và không tự gửi dịch. Ảnh mới cần khoanh vùng lại.
+### Dịch một ảnh trên website
 
-Ảnh chụp tạm nằm trong bộ nhớ phiên extension; đóng cửa sổ dịch sẽ xóa phiên chụp. Chỉ giữ một phiên PDF; bấm Chụp trang PDF lần nữa sẽ thay ảnh trong cửa sổ đó. Không chèn lớp dịch vào trình xem PDF mặc định, không sửa hoặc xuất lại file PDF gốc. Trang nhiều chữ nên phóng to và dịch từng đoạn để giữ độ rõ. Vị trí do Gemini ước lượng; công thức, nhiều cột và bảng có thể bị nhận diện sai.
+1. Mở website có ảnh chứa chữ và chờ ảnh tải xong.
+2. Bấm biểu tượng extension.
+3. Chọn ngôn ngữ đích và cách hiển thị:
+   - **Thay chữ trên ảnh:** che vùng chữ gốc và đặt bản dịch vào vị trí tương ứng.
+   - **Bảng dịch nổi:** đọc bản dịch trong bảng bên cạnh, không đặt chữ lên ảnh.
+4. Bấm **Chọn ảnh để dịch**, rồi bấm vào ảnh muốn dịch trên website.
+5. Chờ kết quả. Nhấn **Esc** nếu muốn hủy thao tác chọn ảnh.
 
-PDF trên máy (`file://`) có thể cần bật **Cho phép truy cập vào URL của tệp / Allow access to file URLs** tại trang chi tiết extension. Nếu mất quyền chụp khi sang website khác, bấm biểu tượng extension tại tab PDF mới rồi chọn Chụp trang PDF lại. Không cần cấp quyền đọc mọi website.
+Nếu ảnh bị website chặn đọc, ứng dụng dùng ảnh chụp phần đang hiển thị. Với ảnh dài, cuộn tới phần tiếp theo rồi chụp lại để dịch tiếp. Giữ nguyên tab và không cuộn trong lúc chụp.
 
-Sau khi nâng cấp bản cài: đóng ứng dụng, chạy Setup.exe mới và chọn đúng thư mục đang cài, mở lại ứng dụng rồi Reload extension ở `chrome://extensions`, `edge://extensions` hoặc `brave://extensions`.
+### Các nút trong bảng dịch
 
-## Giới hạn khác
+| Nút | Dùng khi nào? |
+| --- | --- |
+| **Chụp ảnh mới** | Muốn tự chọn một ảnh khác trên trang. Bấm nút rồi bấm ảnh mới. |
+| **Chụp lại** | Muốn chụp và dịch lại ảnh vừa chọn. Nếu ảnh đó không còn hiển thị, ứng dụng chọn ảnh lớn nhất đang hiển thị. |
+| **Xem ảnh gốc / Hiện bản dịch** | Bật hoặc tắt các lớp dịch để so sánh với ảnh gốc. |
+| **Xóa lớp dịch** | Gỡ các lớp dịch và xem lại ảnh nguyên bản. |
+| **Đóng** | Đóng bảng điều khiển; các lớp dịch đang có vẫn được giữ. |
 
-- Chưa dùng OCR chuyên dụng hoặc phục hồi nền. Vị trí chữ do Gemini ước lượng, không bảo đảm chính xác từng pixel.
-- Hỗ trợ phần tử `<img>` trong trang chính. Chưa hỗ trợ canvas, ảnh nền CSS hoặc ảnh trong iframe.
-- Khi ảnh bị CORS, extension chụp tab bằng quyền activeTab đã có và cắt vùng ảnh trên máy trước khi gửi backend. Ảnh chụp toàn tab chỉ được xử lý tạm trong bộ nhớ; backend và Gemini chỉ nhận vùng đã cắt. Bảng dịch được ẩn khi chụp. Nội dung website đang đè lên vùng ảnh (menu, quảng cáo…) vẫn xuất hiện trong phần đã cắt; hãy đóng chúng trước khi dịch. Giữ tab đang mở và không cuộn trong lúc chụp.
-- Với ảnh bị CORS dài hơn màn hình, chỉ dịch phần đang hiển thị. Cuộn tới phần tiếp theo rồi chọn lại ảnh. Chụp màn hình không lấy được chữ ngoài vùng hiển thị và có chất lượng theo độ phân giải màn hình. Phóng to bằng cử chỉ cần tắt trước khi chụp.
-- Không hoạt động trên trang nội bộ trình duyệt, Chrome Web Store hoặc trang hạn chế extension.
-- Ảnh được thu nhỏ cạnh dài tối đa 2400px trước khi gửi; chữ nhỏ có thể khó đọc. Mỗi lần dịch tối đa 90 giây ở backend, một request đồng thời, không tự retry.
-- Đóng bảng nổi chỉ ẩn giao diện, không hủy request đã gửi. Bản dịch có thể hiện lại khi request xong.
-- Giữ PORT=3000; nếu đổi cổng phải sửa cả `extension/background.js` và `extension/manifest.json`, rồi reload extension.
-- Service worker MV3 có thể bị trình duyệt ngắt với request kéo dài. Nếu kết nối gián đoạn, thử ảnh nhỏ hơn.
+Khi chuyển trang trong cùng website, bảng điều khiển được khôi phục để bạn chọn ảnh mới. Nếu đã bấm **Đóng**, hoặc chuyển sang tên miền/tab khác, hãy bấm biểu tượng extension để kích hoạt lại. Ứng dụng không tự gửi ảnh đi dịch khi bạn chuyển trang.
 
-## Kiểm tra
+### Dịch trang PDF
 
-```powershell
-npm test
-```
+1. Mở PDF trong Chrome, Edge hoặc Trình duyệt tương tự. Cuộn hoặc phóng to phần cần dịch để chữ đủ rõ.
+2. Bấm biểu tượng extension → **Chụp trang PDF**.
+3. Cửa sổ **Dịch trang PDF** mở với ảnh chụp. Kéo chuột khoanh vùng trang hoặc đoạn văn cần dịch; bỏ qua thanh công cụ và hình thu nhỏ ở bên trái.
+4. Chọn ngôn ngữ rồi bấm **Dịch vùng đã chọn**. Nếu muốn dịch toàn bộ ảnh chụp, bấm **Chọn toàn ảnh** trước.
+5. Xem bản dịch đặt lên ảnh bên phải hoặc đọc bản văn bên dưới. Có nút **Xem ảnh gốc / Hiện bản dịch** để so sánh.
+6. Để dịch tiếp, quay lại tab PDF gốc và chuyển trang hoặc cuộn xuống. Trở lại cửa sổ dịch, bấm **Chụp trang tiếp theo**, khoanh vùng mới rồi dịch.
 
-Test backend dùng API giả, không tốn phí. Bộ test kiểm tra dữ liệu vùng chữ, tọa độ, lỗi API, CORS và phép quy đổi tọa độ. Kiểm tra thủ công thêm trên website thực tế: dịch sang ba ngôn ngữ; Esc/Đóng khi chọn; chọn lại nhiều lần; backend chưa chạy; ảnh bị chặn CORS.
+Chức năng này **chỉ chụp phần đang nhìn thấy**, không tự chuyển trang và không dịch toàn bộ tài liệu trong một lần. Bản dịch hiển thị trong cửa sổ riêng; không thay chữ trực tiếp trong trình xem PDF mặc định và không sửa file PDF gốc.
 
-Có thể kiểm tra giao diện bằng Chrome headless với ảnh và API giả:
+Nếu PDF mở từ máy, vào trang quản lý extension → **Chi tiết / Details** → bật **Cho phép truy cập vào URL của tệp / Allow access to file URLs** nếu trình duyệt yêu cầu.
 
-```powershell
-node tests/run-browser.mjs
-node tests/run-browser.mjs --pdf
-```
+## Đổi API key và cập nhật ứng dụng
 
-Trình chạy dùng Chrome ở đường dẫn cài mặc định; có thể đặt biến `CHROME_PATH` nếu khác. Kết quả và ảnh chụp nằm trong `test-output/`. Kiểm tra định vị, co giãn, object-fit, cuộn, CORS, xem ảnh gốc, xóa lớp dịch và đổi nguồn ảnh.
+**Đổi key:** trong ứng dụng Windows, bấm **Cấu hình API**, nhập key mới và lưu. Backend do ứng dụng quản lý sẽ được khởi động lại để dùng cấu hình mới.
 
-Đã xác minh một lượt định vị bằng API Gemini thật với ảnh mẫu HELLO WORLD: trả chữ gốc, bản dịch XIN CHÀO THẾ GIỚI và tọa độ vùng hợp lệ. Đây không phải bảo đảm độ chính xác trên mọi ảnh. Schema gửi Gemini chỉ mô tả cấu trúc; backend kiểm tra thêm số lượng vùng, độ dài văn bản, màu và giới hạn tọa độ trước khi trả cho extension.
+**Cập nhật:** đóng ứng dụng Windows, chạy Setup.exe mới và chọn đúng thư mục đang cài. Sau đó mở lại ứng dụng, vào trang quản lý extension bấm **Tải lại / Reload**, rồi tải lại website bằng **F5**.
 
-Luồng ảnh dựa trên tài liệu chính thức: https://ai.google.dev/api/generate-content
+**Đổi nơi cài:** chạy lại bộ cài và chọn thư mục mới. Bộ cài không tự di chuyển hoặc xóa bản cũ. Gỡ extension đã nạp từ thư mục cũ rồi dùng **Load unpacked** để nạp thư mục mới.
+
+## 
+## Lỗi thường gặp
+
+| Thông báo hoặc hiện tượng | Cách xử lý |
+| --- | --- |
+| Không kết nối được backend | Mở ứng dụng Windows và chờ báo backend đang chạy. Nếu chạy mã nguồn, giữ terminal `npm start` hoạt động. |
+| Chưa cấu hình `GEMINI_API_KEY` | Mở **Cấu hình API**, nhập key và lưu. Với mã nguồn, sửa `backend/.env` rồi chạy lại backend. |
+| Gemini trả lỗi 400, 403 hoặc 404 | Kiểm tra key, tên model và quyền sử dụng API trong AI Studio. Model không khả dụng với tài khoản có thể trả lỗi 404. |
+| Đã chạm hạn mức Gemini / lỗi 429 | Kiểm tra hạn mức trong AI Studio và chờ trước khi thử lại. Tránh bấm dịch liên tục. |
+| Cổng 3000 đang được sử dụng | Nếu đang chạy `npm start` hoặc một bản ứng dụng khác, đóng bản đó trước khi mở bản muốn dùng. |
+| Không chọn được ảnh trên PDF | Dùng **Chụp trang PDF**, không dùng **Chọn ảnh để dịch**. |
+| PDF trên máy không chụp được | Bật quyền truy cập URL tệp tại trang chi tiết extension, rồi bấm biểu tượng extension trên tab PDF để thử lại. |
+| Chụp lại nhầm ảnh | Bấm **Chụp ảnh mới** để chọn đúng ảnh thay vì để ứng dụng chọn ảnh lớn nhất. |
+| Chữ nhỏ, thiếu hoặc đặt lệch | Phóng to ảnh/PDF, chọn vùng nhỏ hơn hoặc dùng bảng dịch nổi. Vị trí chữ do AI ước lượng. |
+| Không thấy tính năng mới sau cập nhật | Đóng/mở lại ứng dụng, Reload extension và nhấn F5 trên website. |
+
+## Dữ liệu, chi phí và giới hạn
+
+- API key nằm trong `backend/.env` ở thư mục cài, không được nhúng vào extension. Không chia sẻ file này hoặc đưa lên GitHub. Bộ cài không chứa key cá nhân của người tạo dự án.
+- Khi bạn yêu cầu dịch ảnh web, ảnh gốc hoặc vùng ảnh chụp được gửi qua backend trên máy tới Google Gemini. Ở chế độ PDF, chỉ vùng bạn chọn được gửi sau khi bấm **Dịch vùng đã chọn**.
+- Ảnh chụp PDF tạm được lưu trong phiên extension. Đóng cửa sổ dịch PDF sẽ xóa phiên đó. Mỗi lần chỉ giữ một phiên PDF.
+- Cần Internet để gọi Gemini. Hạn mức, phí và chính sách xử lý dữ liệu phụ thuộc tài khoản/dịch vụ Google; xem trong [Google AI Studio](https://aistudio.google.com/) trước khi gửi nội dung nhạy cảm.
+- AI có thể dịch sai, bỏ sót hoặc định vị lệch. Chữ trên nền tranh phức tạp được che bằng màu đơn, chưa có chức năng phục hồi nền.
+- Ảnh quá nhỏ, chữ dọc, công thức, bảng và tài liệu nhiều cột có thể cho kết quả kém. Với PDF, nên dịch từng đoạn ở mức phóng to đủ rõ.
+- Chế độ chọn ảnh web hỗ trợ ảnh trong trang chính; chưa chọn trực tiếp được ảnh nền CSS, canvas hoặc ảnh trong iframe. Chế độ chụp PDF không phụ thuộc việc chọn phần tử ảnh.
+- Khi chụp màn hình, menu hoặc quảng cáo đang đè lên vùng ảnh cũng có thể xuất hiện trong ảnh chụp. Hãy đóng chúng trước khi dịch.
+- Dịch ảnh web có thể bị hạn chế trên trang nội bộ của trình duyệt, kho extension hoặc các trang được bảo vệ. Khi đổi website, có thể cần bấm biểu tượng extension để cấp quyền lại.
+
+## 
