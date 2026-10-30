@@ -33,14 +33,12 @@ Gemini áp dụng hạn mức và phí theo model, dự án và tài khoản c�
 
 ### 2. Cài ứng dụng
 
-1. Tải file **AI-Image-Translator.exe** từ mục **Releases** của dự án. 
+1. Chạy file **AI-Image-Translator.exe** 
 2. Chạy file bộ cài trên **Windows 10/11 64-bit**.
 3. Dán **Gemini API key** vào ô tương ứng. Model mặc định của ứng dụng là `gemini-3.1-flash-lite`.
 4. Chọn **Thư mục cài đặt**, hoặc bấm **Duyệt…** để đổi nơi cài. Nên dùng thư mục riêng có quyền ghi, ví dụ `D:\Apps\AIImageTranslator`.
 5. Bấm **Kiểm tra key** nếu muốn kiểm tra kết nối, rồi bấm **Cài đặt**.
 6. Mở **AI Image Translator** từ lối tắt trên Desktop hoặc Start Menu. Chờ thông báo **Backend đang chạy**.
-
-Bộ cài đã kèm Node.js portable. Bạn **không cần cài Node.js, Python hoặc chạy `npm install`**. Nút kiểm tra key xác nhận API chấp nhận key và model tồn tại; không bảo đảm tài khoản còn đủ hạn mức để dịch.
 
 ### 3. Nạp extension vào trình duyệt — chỉ làm lần đầu
 
@@ -51,7 +49,7 @@ Bộ cài đã kèm Node.js portable. Bạn **không cần cài Node.js, Python 
    | --- | --- |
    | Chrome | `chrome://extensions` |
    | Edge | `edge://extensions` |
-   |  vv...| vv... ://extensions` |
+   | vv...| `vv...://extensions` |
 
 3. Bật **Chế độ dành cho nhà phát triển / Developer mode**.
 4. Bấm **Tải tiện ích đã giải nén / Load unpacked**.
