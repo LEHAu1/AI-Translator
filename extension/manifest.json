@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "AI Image Translator",
+  "version": "0.3.0",
+  "description": "Chọn ảnh trên website và dịch bằng AI.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["http://127.0.0.1:3000/*"],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_popup": "popup.html", "default_title": "Dịch ảnh AI"}
+}

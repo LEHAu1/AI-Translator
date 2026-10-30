@@ -1,0 +1,13 @@
+﻿AI IMAGE TRANSLATOR
+
+1. Mở AI Image Translator từ Desktop. Giữ ứng dụng chạy khi dịch.
+2. Trong ứng dụng, bấm Trang extensions rồi bật Developer mode.
+3. Bấm Load unpacked và chọn thư mục:
+C:\Users\Lenovo\OneDrive\Desktop\translator\extension
+4. Mở website, bấm biểu tượng extension để chọn ảnh và dịch.
+
+Node.js portable đã được cài riêng. Không cần npm install hoặc Python. Thư mục cài cần có quyền ghi.
+Key nằm trong backend\.env, không chia sẻ file này. Đổi key bằng nút Cấu hình API.
+Gemini có hạn mức và phí tùy tài khoản; bộ cài không cấp API key, credit hoặc tài khoản Google.
+Đóng ứng dụng sẽ dừng backend do ứng dụng khởi chạy. Thu nhỏ để giữ backend chạy ở khay hệ thống.
+Gỡ cài đặt: đóng ứng dụng, gỡ extension trong Chrome/Edge, rồi xóa thư mục cài và các lối tắt.

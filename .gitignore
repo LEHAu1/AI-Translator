@@ -1,0 +1,7 @@
+backend/.env
+node_modules/
+*.log
+test-output/
+installer/cache/
+installer/build/
+dist/

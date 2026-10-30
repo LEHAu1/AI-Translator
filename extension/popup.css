@@ -1,0 +1,4 @@
+body{width:290px;margin:0;padding:22px;background:#f5f7fc;color:#17223c;font:14px/1.6 system-ui}h1{font-size:22px;margin:0}p{color:#53617a}select,button{box-sizing:border-box;width:100%;padding:11px;border:1px solid #cdd5e4;border-radius:8px;font:inherit}button{background:#345dde;color:white;border:0;cursor:pointer}button:disabled{opacity:.6}.notice{font-size:12px}#status{color:#a32d32;margin-bottom:0}
+label{display:block;margin-top:10px}
+#recapture{margin-top:8px;background:#fff;color:#345dde;border:1px solid #345dde}
+#pdf-capture{margin-top:8px;background:#173d64}

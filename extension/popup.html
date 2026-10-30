@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><link rel="stylesheet" href="popup.css"></head>
+<body><h1>Dịch ảnh AI</h1><p>Chọn ảnh để đọc bản dịch ngay trên trang.</p>
+<label for="language">Dịch sang</label><select id="language"><option value="Vietnamese">Tiếng Việt</option><option value="English">English</option><option value="Japanese">日本語</option></select>
+<label for="mode">Cách hiển thị</label><select id="mode"><option value="overlay">Thay chữ trên ảnh</option><option value="panel">Bảng dịch nổi</option></select>
+<p class="notice">Thay chữ: AI ước lượng vị trí và che chữ gốc bằng nền màu đơn. Có thể bật/tắt bản dịch sau khi dịch.</p>
+<p class="notice">Ảnh đã chọn sẽ được gửi tới Google Gemini qua backend trên máy bạn. Nếu bị CORS, extension chụp vùng ảnh đang hiển thị, bao gồm nội dung đang đè lên vùng đó. Free tier có hạn mức; phí tùy cấu hình tài khoản.</p>
+<button id="start">Chọn ảnh để dịch</button>
+<button id="recapture">Chụp lại</button>
+<button id="pdf-capture">Chụp trang PDF</button>
+<p class="notice">PDF: chụp phần đang hiển thị, khoanh vùng rồi dịch trong cửa sổ riêng. Chỉ vùng bạn chọn được gửi tới Gemini.</p>
+<p class="notice">Chụp lại ảnh vừa chọn. Sau khi chuyển trang, chụp ảnh lớn nhất đang hiển thị. Chỉ gửi vùng ảnh đã cắt.</p>
+<p id="status" role="status"></p><script src="popup.js"></script></body></html>

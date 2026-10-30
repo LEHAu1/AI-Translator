@@ -1,0 +1,1 @@
+{"name":"ai-image-translator","private":true,"type":"module","scripts":{"start":"node --env-file-if-exists=backend/.env backend/server.mjs","test":"node --test backend/server.test.mjs extension/background.test.mjs extension/geometry.test.mjs extension/pdf-capture.test.mjs"},"engines":{"node":">=22"}}
