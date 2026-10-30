@@ -33,7 +33,7 @@ Gemini áp dụng hạn mức và phí theo model, dự án và tài khoản c�
 
 ### 2. Cài ứng dụng
 
-1. Chạy file **AI-Image-Translator.exe** 
+1. Chạy file **AIImageTranslator.exe** 
 2. Chạy file bộ cài trên **Windows 10/11 64-bit**.
 3. Dán **Gemini API key** vào ô tương ứng. Model mặc định của ứng dụng là `gemini-3.1-flash-lite`.
 4. Chọn **Thư mục cài đặt**, hoặc bấm **Duyệt…** để đổi nơi cài. Nên dùng thư mục riêng có quyền ghi, ví dụ `D:\Apps\AIImageTranslator`.
